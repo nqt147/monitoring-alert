@@ -10,9 +10,10 @@ public class MySQLConnector {
 
     private static final Logger logger = LoggerFactory.getLogger(MySQLConnector.class);
     private static final SimpleDateFormat dateFormatFile = new SimpleDateFormat("yyy-MM-dd");
+    private static final SimpleDateFormat dayFile = new SimpleDateFormat("yyyMM");
     private static Connection conn;
     private static MySQLConnector instance;
-    private static String COUNT_ROW = "SELECT count(*) as counter FROM fec_repayment202012 WHERE trans_time >= '%s' and  trans_time <= '%s'";
+    private static String COUNT_ROW = "SELECT count(*) as counter FROM %s WHERE trans_time >= '%s' and  trans_time <= '%s'";
 
     private MySQLConnector() {
 
@@ -37,7 +38,7 @@ public class MySQLConnector {
     }
 
     public synchronized Integer executeQuery() throws SQLException {
-
+        String tableName = "fec_repayment" + dayFile.format(new Date(System.currentTimeMillis()));
         PreparedStatement pst = null;
         ResultSet rs = null;
         int counter = 0;
@@ -47,7 +48,7 @@ public class MySQLConnector {
         String endDay = yesterday + "T23:59:59.999+07:00";
         try {
             logger.info("=============== CONNECTED");
-            String query = String.format(COUNT_ROW, startDay, endDay);
+            String query = String.format(COUNT_ROW, tableName, startDay, endDay);
             logger.info("Query: {}", query);
             pst = conn.prepareStatement(query);
             rs = pst.executeQuery();
@@ -55,10 +56,11 @@ public class MySQLConnector {
 
             rs.next();
             logger.info(String.valueOf(rs.getInt("counter")));
-            counter = rs.getInt("counter");
+            return rs.getInt("counter");
 
         } catch (SQLException ex) {
             ex.printStackTrace();
+            return -1;
 
         } finally {
             try {
@@ -69,10 +71,13 @@ public class MySQLConnector {
                 if (pst != null) {
                     pst.close();
                 }
+                if(conn != null){
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 logger.info(ex.getMessage());
             }
         }
-        return counter;
+
     }
 }

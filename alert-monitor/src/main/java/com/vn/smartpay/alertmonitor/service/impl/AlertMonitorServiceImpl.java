@@ -71,6 +71,23 @@ public class AlertMonitorServiceImpl implements AlertMonitorService {
         return ResponseEntity.ok();
     }
 
+    @Override
+    public ResponseEntity.BodyBuilder alertMonitorCallText(JsonObject joData) throws IOException {
+        String text = joData.get("text").getAsString();
+        if (text == null || "".equalsIgnoreCase(text)) {
+            throw new AlertException("Params not found");
+        }
+        JsonObject joResponse = callService.callSpeakText(text);
+
+        return JsonUtil.getInt(joResponse, "r", -1) == 0 ? ResponseEntity.ok() : ResponseEntity.badRequest();
+    }
+
+    @Override
+    public void alertCallByText(String text) throws IOException {
+        JsonObject joResponse = callService.callSpeakText(text);
+        logger.info("alertCallByText: {}", joResponse.toString());
+    }
+
     public ResponseEntity.BodyBuilder alertCritical(JsonObject joAttachment) throws IOException {
         JsonObject joField = joAttachment.get("fields").getAsJsonArray().get(0).getAsJsonObject();
         String title = JsonUtil.getString(joField, "title", "Alert critical");
@@ -82,6 +99,10 @@ public class AlertMonitorServiceImpl implements AlertMonitorService {
 
     public ResponseEntity.BodyBuilder alertError(JsonObject joAttachment) throws IOException {
         JsonObject joResponse = null;
+        JsonArray arrField = joAttachment.get("fields").getAsJsonArray();
+        if (arrField.size() == 0) {
+            return ResponseEntity.ok();
+        }
         JsonObject joField = joAttachment.get("fields").getAsJsonArray().get(0).getAsJsonObject();
         String title = JsonUtil.getString(joField, "title", "Alert error");
         String text = this.filterMessage(title);
@@ -175,7 +196,14 @@ public class AlertMonitorServiceImpl implements AlertMonitorService {
     public void alertApplication(String data) {
         JsonObject jsonObject = new JsonParser().parse(data).getAsJsonObject();
         logger.info("alertApplication: {}", jsonObject);
-        this.runSh();
+        this.runSh("alert_restart");
+    }
+
+    @Override
+    public void restartMerchantHiveMQ(String data) {
+        JsonObject jsonObject = new JsonParser().parse(data).getAsJsonObject();
+        logger.info("alertApplication: {}", jsonObject);
+        this.runSh("restart_merchant_hivemq");
     }
 
     @Override
@@ -189,11 +217,11 @@ public class AlertMonitorServiceImpl implements AlertMonitorService {
         }
     }
 
-    public void runSh() {
+    public void runSh(String nameSH) {
         Process p;
         try {
             Map<String, Map<String, String>> config = alertMonitorConfig.getConfig();
-            Map<String, String> alertRestart = config.get("alert_restart");
+            Map<String, String> alertRestart = config.get(nameSH);
             logger.info("runSh path : {}", alertRestart.getOrDefault("path", ""));
             List<String> cmdList = new ArrayList<>();
             cmdList.add("sh");

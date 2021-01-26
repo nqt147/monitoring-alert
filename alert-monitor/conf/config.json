@@ -22,7 +22,7 @@
     "day_in_week": {
       "Monday": [
         {
-          "number": "84349988997",
+          "number": "84964129341",
           "priority": "0"
         }
       ],
@@ -75,5 +75,11 @@
   },
   "move_file_ipat": {
     "path": "./script/sync_file_IPAT.sh"
+  },
+  "export_file_ipat": {
+    "path": "./script/run_export_file_ipat.sh"
+  },
+  "restart_merchant_hivemq": {
+    "path": "./script/restart_sp_merchant_consumer_hivemq.sh"
   }
 }

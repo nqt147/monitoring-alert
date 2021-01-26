@@ -19,6 +19,12 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/me.ramswaroop.jbot/jbot -->
+        <dependency>
+            <groupId>me.ramswaroop.jbot</groupId>
+            <artifactId>jbot</artifactId>
+            <version>4.1.2-rc.2</version>
+        </dependency>
         <!-- influxdb-->
         <dependency>
             <groupId>org.influxdb</groupId>

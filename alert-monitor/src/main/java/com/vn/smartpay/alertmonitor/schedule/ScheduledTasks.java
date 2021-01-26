@@ -83,26 +83,64 @@ public class ScheduledTasks {
             String fromFile = "SMARTNET_" + fromDay;
             String toFile = "SMARTNET_" + fromDay + "050102.csv";
             String time = toDay + "0501";
-            for (int i = 0; i < listOfFiles.length; i++) {
-                if (listOfFiles[i].isFile() && listOfFiles[i].getName().contains(fromFile)) {
-                    logger.info("File: {}", listOfFiles[i].getName());
-                    fromFile = listOfFiles[i].getName();
+            for (File listOfFile : listOfFiles) {
+                if (listOfFile.isFile() && listOfFile.getName().contains(fromFile)) {
+                    logger.info("File: {}", listOfFile.getName());
+                    fromFile = listOfFile.getName();
                     break;
                 }
             }
+
             int countRow = ExcelUtils.countRowFile(checkFilePath.getOrDefault("path", "") + fromFile) - 2;
+            if (countRow == -2) {
+                logger.info("Count row file excel false");
+                this.runExportFileIPAT();
+                alertMonitorService.alertCallByText("Not found file excel");
+                return;
+            }
+
             int countRecord = MySQLConnector.getInstance().executeQuery();
+            if(countRecord == -1){
+                logger.info("SQL execute false");
+                alertMonitorService.alertCallByText("Query my SQL fail");
+                return;
+            }
+
             logger.info("countRow: {}, countRecord: {}", countRow, countRecord);
             if (countRecord == countRow) {
                 this.moveFileIPATSh(fromFile, toFile, time, moveFilePath.getOrDefault("path", ""));
                 return;
             }
+
             cache.get("export_excel_error");
-//                alertMonitorService.alertMonitorCall("Export excel error");
         } catch (IOException | SQLException e) {
             e.printStackTrace();
 //            alertMonitorService.alertMonitorCall("");
         }
+    }
+
+    public void runExportFileIPAT() {
+//        Process p;
+//        try {
+//            Map<String, Map<String, String>> config = alertMonitorConfig.getConfig();
+//            Map<String, String> alertRestart = config.get("export_file_ipat");
+//            logger.info("runSh path : {}", alertRestart.getOrDefault("path", ""));
+//            List<String> cmdList = new ArrayList<>();
+//            cmdList.add("sh");
+//            cmdList.add(alertRestart.getOrDefault("path", ""));
+//
+//            ProcessBuilder pb = new ProcessBuilder(cmdList);
+//            p = pb.start();
+//            p.waitFor();
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                logger.info(line);
+//            }
+//        } catch (IOException | InterruptedException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
     }
 
     public void syncIPATSh() {

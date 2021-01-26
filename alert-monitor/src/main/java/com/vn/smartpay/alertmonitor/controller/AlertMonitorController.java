@@ -39,6 +39,14 @@ public class AlertMonitorController {
         return new ResponseEntity<>("success!", HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/alert_call_text", method = RequestMethod.POST)
+    public ResponseEntity<String> alertCallText(@RequestBody String data) throws IOException {
+        logger.info("Request: {}", data);
+        JsonObject joData = JsonParser.parseString(data).getAsJsonObject();
+        alertMonitorService.alertMonitorCallText(joData);
+        return new ResponseEntity<>("success!", HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/reload_config", method = RequestMethod.POST)
     public ResponseEntity<String> reloadConfig() throws IOException {
         alertMonitorService.reloadConfig();
@@ -48,6 +56,12 @@ public class AlertMonitorController {
     @RequestMapping(value = "/alert_restart", method = RequestMethod.POST)
     public ResponseEntity<String> alertRestartApplication(@RequestBody String data) {
         alertMonitorService.alertApplication(data);
+        return new ResponseEntity<>("success!", HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/restart_merchant_hivemq", method = RequestMethod.POST)
+    public ResponseEntity<String> restartMerchantHiveMQ(@RequestBody String data) {
+        alertMonitorService.restartMerchantHiveMQ(data);
         return new ResponseEntity<>("success!", HttpStatus.OK);
     }
 

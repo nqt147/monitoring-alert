@@ -59,7 +59,7 @@ public class AlertMonitorConfig {
 
     @Bean
     public void initListServer() {
-        try (Reader reader = Files.newBufferedReader(Paths.get("conf/config.json"))) {
+        try (Reader reader = Files.newBufferedReader(Paths.get("conf/server_list.json"))) {
             lstServer = gson.fromJson(reader, JsonObject.class);
         } catch (IOException e) {
             LOGGER.error("Get configuration ex : {}", e.getMessage());

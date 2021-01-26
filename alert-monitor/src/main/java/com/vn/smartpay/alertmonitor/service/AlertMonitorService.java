@@ -11,9 +11,15 @@ public interface AlertMonitorService {
 
     ResponseEntity.BodyBuilder alertMonitorCallSpeakText(JsonObject joData) throws IOException;
 
+    ResponseEntity.BodyBuilder alertMonitorCallText(JsonObject joData) throws IOException;
+
+    void alertCallByText(String text) throws IOException;
+
     void reloadConfig();
 
     void alertApplication(String data);
+
+    void restartMerchantHiveMQ(String data);
 
     void verifyFileIPAT();
 }
