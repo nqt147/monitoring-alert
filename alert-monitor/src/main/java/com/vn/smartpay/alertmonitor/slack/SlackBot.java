@@ -80,7 +80,7 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller(events = EventType.PIN_ADDED)
+    @Controller(events = EventType.MESSAGE)
     public void onPinAdded(WebSocketSession session, Event event) {
         reply(session, event, "Thanks for the pin! You can find all pinned items under channel details.");
     }

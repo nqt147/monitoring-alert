@@ -1,4 +1,4 @@
-package example.jbot.slack;
+package com.vn.smartpay.alertmonitor.slack;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,7 +62,7 @@ public class SlackWebhooks {
         try {
             restTemplate.postForEntity(slackIncomingWebhookUrl, richMessage.encodedMessage(), String.class);
         } catch (RestClientException e) {
-            logger.error("Error posting to Slack Incoming Webhook: ", e);
+            logger.error("  posting to Slack Incoming Webhook: ", e);
         }
     }
 }

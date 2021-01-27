@@ -1,4 +1,4 @@
-package me.ramswaroop.jbot.core.common.configuration;
+package com.vn.smartpay.alertmonitor.slack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=me.ramswaroop.jbot.core.common.configuration.DefaultConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.vn.smartpay.alertmonitor.slack.DefaultConfiguration
